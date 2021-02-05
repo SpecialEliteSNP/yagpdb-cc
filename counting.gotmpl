@@ -1,0 +1,28 @@
+{{/* {{ dbSet 20 "counting" (sdict "c" 0 "m" 0 "u" 0) }} */}}
+{{ $c := sdict }}
+{{ with (dbGet 20 "story-channel").Value }}{{ $c = sdict . }}{{ end }}
+
+{{ if or (not (reFind `\A\d+\z` .Message.Content)) (ne $c.c (toInt .Message.Content)) }}
+  {{ addReactions "❌" }}
+  {{ deleteTrigger 1 }}
+  {{ if not (getMessage nil $c.m) }}
+    We're currently at: `{{ $c.c }}`
+  {{ else }}
+    {{ .User.Mention }}, not the right number bud 😅
+  {{ end }}
+  {{ deleteResponse 5 }}
+{{ else if eq .User.ID $c.u }}
+  {{ addReactions "👎" }}
+  {{ deleteTrigger 5 }}
+  {{ .User.Mention }}, we do counting together 😠
+  {{ deleteResponse 5 }}
+{{ else }}
+  {{ deleteAllMessageReactions nil $c.m }}
+  {{ addReactions "☑" }}
+  {{ dbSet 20 "counting" (sdict "c" (add $c.c 1) "m" .Message.ID "u" .User.ID) }}
+  {{ if eq (toInt (mod $c.c 1000)) 0 }}
+    Holy moly, have we really reached {{ $c.c }}?! 😲
+  {{ else if eq (toInt (mod $c.c 100)) 0 }}
+    We have reached {{ $c.c }}! 🎉
+  {{ end }}
+{{ end }}
