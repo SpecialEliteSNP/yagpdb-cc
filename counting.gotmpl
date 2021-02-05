@@ -1,6 +1,6 @@
 {{/* {{ dbSet 20 "counting" (sdict "c" 0 "m" 0 "u" 0) }} */}}
 {{ $c := sdict }}
-{{ with (dbGet 20 "story-channel").Value }}{{ $c = sdict . }}{{ end }}
+{{ with (dbGet 20 "counting").Value }}{{ $c = sdict . }}{{ end }}
 
 {{ if or (not (reFind `\A\d+\z` .Message.Content)) (ne $c.c (toInt .Message.Content)) }}
   {{ addReactions "❌" }}
