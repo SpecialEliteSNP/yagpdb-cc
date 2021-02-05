@@ -1,0 +1,41 @@
+{{/* SETUP
+     - Set the restrictions to only run in your qotd channel
+     - Set the trigger type to Regex and the trigger to: \A
+*/}}
+
+{{/* VARIABLES - You can edit these values */}}
+
+
+
+{{/* CODE - Don't edit this part */}}
+{{ $q := sdict }}
+{{ with (dbGet 20 "qotd").Value }}{{ $q = sdict . }}{{ end }}
+
+{{ if not $q }}
+  {{ dbSet 20 "qotd" (sdict "l" (sdict "m" 796826752340721675 "t" 0 "u" 240468618427629579)) }}
+{{ else if and $isMod (in .Message.MentionRoles 778990627534536745) }}
+  {{ $l := getMessage 775747547175714827 $q.l.m }}
+  {{ $u := getMember $q.l.u }}
+  {{ sendMessage 797104575076368444 (cembed "title" "QOTD Report" "color" 49306 "fields" (cslice (sdict "name" "Question:" "value" $l.Content "inline" false) (sdict "name" "Answers:" "value" (str $q.l.t) "inline" true) (sdict "name" "Message ID:" "value" (str $q.l.m) "inline" true)) "footer" (sdict "text" $u.User.String "icon_url" ($u.User.AvatarURL "64")) "timestamp" $l.Timestamp) }}
+  {{ deleteTrigger 0 }}
+  {{ $m := sendMessageNoEscapeRetID nil .Message.Content }}
+  {{ range $k, $v := $q }}
+    {{ if eq $k "l" }}
+      {{ $q.Set $k (sdict "m" $m "t" 0 "u" $.User.ID) }}
+    {{ else }}
+      {{ $q.Set $k (sdict "a" 0 "n" $v.n) }}
+    {{ end }}
+  {{ end }}
+  {{ dbSet 20 "qotd" $q}}
+{{ else }}
+  {{ $a := ($q.Get (str .User.ID)).a }}
+  {{ if not $a }}
+    {{ $q.Set (str .User.ID) (sdict "a" 1 "n" (add ($q.Get (str .User.ID)).n 1 )) }}
+    {{ $q.Set "l" (sdict "m" $q.l.m "t" (add $q.l.t 1) "u" $q.l.u) }}
+    {{ dbSet 20 "qotd" $q }}
+  {{ else if not $isMod }}
+    {{ deleteTrigger 0 }}
+    {{ .User.Mention }}, you can only answer the question once 😉
+    {{ deleteResponse 5 }}
+  {{ end }}
+{{ end }}
