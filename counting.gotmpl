@@ -4,11 +4,13 @@
 */}}
 
 {{/* VARIABLES - You can edit these values */}}
-{{ $wrong_number := "not the right number bud 😅" }}{{/* Message when they get the count wrong */}}
-{{ $ego_member := "we do counting together 😠" }}{{/* Message when they try to count twice in a row */}}
+{{ $wrong := "not the right number bud 😅" }}{{/* Message when they get the count wrong */}}
+{{ $twice := "we do counting together 😠" }}{{/* Message when they try to count twice in a row */}}
 {{ $1000_ntf := "Holy moly, have we really reached" }}{{/* Milestone notification for every 1000 */}}
 {{ $100_ntf := "We have reached" }}{{/* Milestone notification for every 100 */}}
-{{ $warn_on_delete := false }}{{/* Warn when a member deletes their latest correct count */}}
+{{ $warn_on_del := false }}{{/* Warn when a member deletes their latest correct count */}}
+{{ $warn_msg := "Don't delete your latest correct count!" }}{{/* Warning message */}}
+{{ $ignored_roles := cslice 763447831829938176 764103587223044116 778952687986802698 }}{{/* Role to ignore when trying to warn. This should be the roles above the bot since it can't warn members with a role higher than itself. */}}
 
 
 {{/* CODE - Don't edit this part */}}
@@ -21,15 +23,16 @@
   {{ deleteTrigger 1 }}
   {{ if not (getMessage nil $c.m) }}
     We're currently at: `{{ $c.c }}`
-    {{ if $warn_on_delete }}{{ execAdmin "warn" $c.u "Don't delete your latest correct count." }}{{ end }}
+    {{ $w := true }}{{ range .Member.Roles }}{{ if in $ignored_roles . }}{{ $w = false }}{{ end }}
+    {{ if and $warn_on_del $w }}{{ execAdmin "warn" $c.u $warn_msg }}{{ end }}
   {{ else }}
-    {{ print .User.Mention ", " $wrong_number }}
+    {{ print .User.Mention ", " $wrong }}
   {{ end }}
   {{ deleteResponse 5 }}
 {{ else if eq .User.ID $c.u }}
   {{ addReactions "👎" }}
   {{ deleteTrigger 5 }}
-  {{ print .User.Mention ", " $ego_member }}
+  {{ print .User.Mention ", " $twice }}
   {{ deleteResponse 5 }}
 {{ else }}
   {{ deleteAllMessageReactions nil $c.m }}
