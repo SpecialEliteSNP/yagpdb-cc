@@ -20,8 +20,8 @@
   {{ addReactions "❌" }}
   {{ deleteTrigger 1 }}
   {{ if not (getMessage nil $c.m) }}
-    {{ if $warn_on_delete }}{{ execAdmin "warn" $c.u "Don't delete your latest correct count." }}{{ end }}
     We're currently at: `{{ $c.c }}`
+    {{ if $warn_on_delete }}{{ execAdmin "warn" $c.u "Don't delete your latest correct count." }}{{ end }}
   {{ else }}
     {{ print .User.Mention ", " $wrong_number }}
   {{ end }}
