@@ -4,17 +4,16 @@
 */}}
 
 {{/* VARIABLES - You can edit these values */}}
-{{ $w := 3 }} {{/* Replace 3 with amount of words you want to be used in the x-word-story channel */}}
+{{ $words := 3 }} {{/* Replace 3 with amount of words you want to be used in the x-word-story channel */}}
 
 
 {{/* CODE - Don't edit this part */}}
 {{ $u := str .User.ID }}
-{{ $lu := "" }}
-{{ with (dbGet 20 "story-channel").Value }}{{ $lu = . }}{{ end }}
+{{ $lu := "" }}{{ with (dbGet 20 "story-channel").Value }}{{ $lu = . }}{{ end }}
 
-{{ if not (reFind (print `\A\s*(?:[[:alpha:]]+\s+){` (sub $w 1) `}[[:alpha:]]+\s*\z`) .Message.Content) }}
+{{ if not (reFind (print `\A\s*(?:[[:alpha:]]+\s+){` (sub $words 1) `}[[:alpha:]]+\s*\z`) .Message.Content) }}
   {{ deleteTrigger 0 }}
-  {{ print .User.Mention ", please use exactly **" $w "** words in this channel 😉" }}
+  {{ print .User.Mention ", please use exactly **" $words "** words in this channel 😉" }}
 {{ else if or (not $lu) (ne $lu $u) }}
   {{ dbSet 20 "story-channel" $u }}
 {{ else }}

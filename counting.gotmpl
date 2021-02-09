@@ -12,8 +12,7 @@
 
 
 {{/* CODE - Don't edit this part */}}
-{{ $c := sdict }}
-{{ with (dbGet 20 "counting").Value }}{{ $c = sdict . }}{{ end }}
+{{ $c := sdict }}{{ with (dbGet 20 "counting").Value }}{{ $c = sdict . }}{{ end }}
 
 {{ if not $c }}
   {{ dbSet 20 "counting" (sdict "c" 1 "m" 0 "u" 0) }}
