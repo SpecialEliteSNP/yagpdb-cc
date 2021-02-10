@@ -8,6 +8,7 @@
 {{ $twice := "we do counting together 😠" }}{{/* Message when they try to count twice in a row */}}
 {{ $1000_ntf := "Holy moly, have we really reached" }}{{/* Milestone notification for every 1000 */}}
 {{ $100_ntf := "We have reached" }}{{/* Milestone notification for every 100 */}}
+{{ $edit_del_msg := "we're currently at:" }}
 {{ $warn_on_del := false }}{{/* Warn when a member deletes their latest correct count */}}
 {{ $warn_msg := "Don't delete your latest correct count!" }}{{/* Warning message */}}
 {{ $ignored_roles := cslice 763447831829938176 764103587223044116 778952687986802698 }}{{/* Role to ignore when trying to warn. This should be the roles above the bot since it can't warn members with a role higher than itself. */}}
@@ -21,8 +22,8 @@
 {{ else if or (not (reFind `\A\d+\z` .Message.Content)) (ne $c.c (toInt .Message.Content)) }}
   {{ addReactions "❌" }}
   {{ deleteTrigger 1 }}
-  {{ if not (getMessage nil $c.m) }}
-    We're currently at: `{{ $c.c }}`
+  {{ if if or (not (getMessage nil $c.m)) (ne (sub $c.c 1) (toInt (getMessage nil $c.m))) }}
+    {{ print .User.Mention ", " $edit_del_msg " `" $c.c "`" }}
     {{ $w := true }}{{ range .Member.Roles }}{{ if in $ignored_roles . }}{{ $w = false }}{{ end }}
     {{ if and $warn_on_del $w }}{{ execAdmin "warn" $c.u $warn_msg }}{{ end }}
   {{ else }}
