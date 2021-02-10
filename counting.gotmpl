@@ -22,7 +22,7 @@
 {{ else if or (not (reFind `\A\d+\z` .Message.Content)) (ne $c.c (toInt .Message.Content)) }}
   {{ addReactions "❌" }}
   {{ deleteTrigger 1 }}
-  {{ if if or (not (getMessage nil $c.m)) (ne (sub $c.c 1) (toInt (getMessage nil $c.m))) }}
+  {{ if or (not (getMessage nil $c.m)) (ne (sub $c.c 1) (toInt (getMessage nil $c.m))) }}
     {{ print .User.Mention ", " $edit_del_msg " `" $c.c "`" }}
     {{ $w := true }}{{ range .Member.Roles }}{{ if in $ignored_roles . }}{{ $w = false }}{{ end }}
     {{ if and $warn_on_del $w }}{{ execAdmin "warn" $c.u $warn_msg }}{{ end }}
