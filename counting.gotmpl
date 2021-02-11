@@ -26,7 +26,7 @@
   {{ if or (not $m) (ne (sub $c.c 1) (toInt $m.Content)) }}
     {{ print .User.Mention ", " $edit_del_msg " `" $c.c "`" }}
     {{ $w := true }}{{ range (getMember $m.Author.ID).Roles }}{{ if in $ignored_roles . }}{{ $w = false }}{{ end }}{{ end }}
-    {{ if and $warn_on_del $w }}{{ execAdmin "warn" $c.u $warn_msg }}{{ end }}
+    {{ if and $warn_on_del $w }}{{ $s := execAdmin "warn" $c.u $warn_msg }}{{ end }}
   {{ else }}
     {{ print .User.Mention ", " $wrong }}
   {{ end }}
