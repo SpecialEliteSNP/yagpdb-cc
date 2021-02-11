@@ -18,6 +18,7 @@
 {{ $c := sdict }}{{ with (dbGet 20 "counting").Value }}{{ $c = sdict . }}{{ end }}
 
 {{ if not $c }}
+	{{ addReactions "☑" }}
   {{ dbSet 20 "counting" (sdict "c" 1 "m" 0 "u" 0 "w" 0) }}
 {{ else if or (not (reFind `\A\d+\z` .Message.Content)) (ne $c.c (toInt .Message.Content)) }}
   {{ addReactions "❌" }}
