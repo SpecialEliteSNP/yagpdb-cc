@@ -4,6 +4,7 @@
 */}}
 
 {{/* VARIABLES - You can edit these values */}}
+{{ $emoji := "☑" }}{{/* Emoji to be added to the latest correct count */}}
 {{ $wrong := "not the right number bud 😅" }}{{/* Message when they get the count wrong */}}
 {{ $twice := "we do counting together 😠" }}{{/* Message when they try to count twice in a row */}}
 {{ $1000_ntf := "Holy moly, have we really reached" }}{{/* Milestone notification for every 1000 */}}
@@ -18,7 +19,8 @@
 {{ $c := sdict }}{{ with (dbGet 20 "counting").Value }}{{ $c = sdict . }}{{ end }}
 
 {{ if not $c }}
-	{{ addReactions "☑" }}
+	{{ print .User.Mention ", <#" .Channel.ID "> is all set up as your counting channel!" }}
+	{{ addReactions $emoji }}
   {{ dbSet 20 "counting" (sdict "c" 1 "m" 0 "u" 0 "w" 0) }}
 {{ else if or (not (reFind `\A\d+\z` .Message.Content)) (ne $c.c (toInt .Message.Content)) }}
   {{ addReactions "❌" }}
@@ -31,7 +33,7 @@
   {{ else }}
     {{ print .User.Mention ", " $wrong }}
   {{ end }}
-  {{ deleteResponse 5 }}
+  {{ deleteResponse 10 }}
 {{ else if eq .User.ID $c.u }}
   {{ addReactions "👎" }}
   {{ deleteTrigger 5 }}
@@ -39,7 +41,7 @@
   {{ deleteResponse 5 }}
 {{ else }}
   {{ deleteAllMessageReactions nil $c.m }}
-  {{ addReactions "☑" }}
+  {{ addReactions $emoji }}
   {{ dbSet 20 "counting" (sdict "c" (add $c.c 1) "m" .Message.ID "u" .User.ID) }}
   {{ if eq (toInt (mod $c.c 1000)) 0 }}
     {{ print $1000_ntf " " $c.c "?! 😲" }}
