@@ -4,20 +4,32 @@
 */}}
 
 {{/* VARIABLES - You can edit these values */}}
-{{ $emoji := "☑" }}{{/* Emoji to be added to the latest correct count */}}
-{{ $wrong := "not the right number bud 😅" }}{{/* Message when they get the count wrong */}}
-{{ $twice := "we do counting together 😠" }}{{/* Message when they try to count twice in a row */}}
-{{ $1000_ntf := "Holy moly, have we really reached" }}{{/* Milestone notification for every 1000 */}}
-{{ $100_ntf := "We have reached" }}{{/* Milestone notification for every 100 */}}
-{{ $edit_del_msg := "we're currently at:" }}
-{{ $warn_on_del := false }}{{/* Warn when a member deletes their latest correct count */}}
-{{ $warn_msg := "Don't delete your latest correct count!" }}{{/* Warning message */}}
-{{ $ignored_roles := cslice 763447831829938176 764103587223044116 778952687986802698 }}{{/* Role to ignore when trying to warn. This should be the roles above the bot since it can't warn members with a role higher than itself. */}}
+  {{/* Emoji to be added to the latest correct count */}}
+    {{ $emoji := "☑" }}
+
+  {{/* Responses: */}}
+    {{/* Message when they get the count wrong */}}
+      {{ $wrong := "not the right number bud 😅" }}
+    {{/* Message when they try to count twice in a row */}}
+      {{ $twice := "we do counting together 😠" }}
+    {{/* Milestone notification for every 1000 */}}
+      {{ $1000_ntf := "Holy moly, have we really reached" }}
+    {{/* Milestone notification for every 100 */}}
+      {{ $100_ntf := "We have reached" }}
+
+  {{/* Warnings */}}
+    {{/* Info message when the latest correct count was changed (edited or deleted) */}}
+      {{ $change_msg := "we're currently at:" }}
+    {{/* Warn when a member deletes their latest correct count */}}
+      {{ $warn_on_del := false }}
+    {{/* Warning message */}}
+      {{ $warn_msg := "Don't delete your latest correct count!" }}
+    {{/* Role to ignore when trying to warn. This should be the roles above the bot since it can't warn members with a role higher than itself. */}}
+      {{ $ignored_roles := cslice 763447831829938176 764103587223044116 778952687986802698 }}
 
 
 {{/* CODE - Don't edit this part */}}
 {{ $c := sdict }}{{ with (dbGet 20 "counting").Value }}{{ $c = sdict . }}{{ end }}
-
 {{ if not $c }}
 	{{ print .User.Mention ", <#" .Channel.ID "> is all set up as your counting channel!" }}
 	{{ addReactions $emoji }}
@@ -27,7 +39,7 @@
   {{ deleteTrigger 1 }}
   {{ $m := getMessage nil $c.m }}
   {{ if or (not $m) (ne (sub $c.c 1) (toInt $m.Content)) }}
-    {{ print .User.Mention ", " $edit_del_msg " `" $c.c "`" }}
+    {{ print .User.Mention ", " $change_msg " `" $c.c "`" }}
     {{ $w := true }}{{ range (getMember $m.Author.ID).Roles }}{{ if in $ignored_roles . }}{{ $w = false }}{{ end }}{{ end }}
     {{ if and $warn_on_del (not $c.w) $w }}{{ $s := execAdmin "warn" $c.u $warn_msg }}{{ $c.Set "w" 1 }}{{ dbSet 20 "counting" $c}}{{ end }}
   {{ else }}
