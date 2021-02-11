@@ -6,18 +6,23 @@
 {{/* VARIABLES - You can edit these values */}}
   {{/* Replace 3 with amount of words you want to be used in the x-word-story channel */}}  
     {{ $words := 3 }}
+  {{/* Roles to ignore, these could be your staff roles or just other exceptions */}}
+  {{ $ignored_roles := cslice 763447831829938176 764103587223044116 778952687986802698 764054381535821825 775003755842109440 }}
 
 
 {{/* CODE - Don't edit this part */}}
-{{ $u := str .User.ID }}
-{{ $lu := "" }}{{ with (dbGet 20 "story-channel").Value }}{{ $lu = . }}{{ end }}
-{{ if not (reFind (print `\A\s*(?:[[:alpha:]]+\s+){` (sub $words 1) `}[[:alpha:]]+\s*\z`) .Message.Content) }}
-  {{ deleteTrigger 0 }}
-  {{ print .User.Mention ", please use exactly **" $words "** words in this channel 😉" }}
-{{ else if or (not $lu) (ne $lu $u) }}
-  {{ dbSet 20 "story-channel" $u }}
-{{ else }}
-  {{ deleteTrigger 0 }}
-  {{ .User.Mention }}, you can't write a story on your own 😉
+{{ $r := true }}{{ range .Member.Roles }}{{ if in $ignored_roles . }}{{ $r = false }}{{ end }}{{ end }}
+{{ if $r }}
+  {{ $u := str .User.ID }}
+  {{ $lu := "" }}{{ with (dbGet 20 "story-channel").Value }}{{ $lu = . }}{{ end }}
+  {{ if not (reFind (print `\A\s*(?:[[:alpha:]]+\s+){` (sub $words 1) `}[[:alpha:]]+\s*\z`) .Message.Content) }}
+    {{ deleteTrigger 0 }}
+    {{ print .User.Mention ", please use exactly **" $words "** words in this channel 😉" }}
+  {{ else if or (not $lu) (ne $lu $u) }}
+    {{ dbSet 20 "story-channel" $u }}
+  {{ else }}
+    {{ deleteTrigger 0 }}
+    {{ .User.Mention }}, you can't write a story on your own 😉
+  {{ end }}
+  {{ deleteResponse 5 }}
 {{ end }}
-{{ deleteResponse 5 }}
