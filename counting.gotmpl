@@ -18,7 +18,7 @@
 {{ $c := sdict }}{{ with (dbGet 20 "counting").Value }}{{ $c = sdict . }}{{ end }}
 
 {{ if not $c }}
-  {{ dbSet 20 "counting" (sdict "c" 1 "m" 0 "u" 0) }}
+  {{ dbSet 20 "counting" (sdict "c" 1 "m" 0 "u" 0 "w" 0) }}
 {{ else if or (not (reFind `\A\d+\z` .Message.Content)) (ne $c.c (toInt .Message.Content)) }}
   {{ addReactions "❌" }}
   {{ deleteTrigger 1 }}
@@ -26,7 +26,7 @@
   {{ if or (not $m) (ne (sub $c.c 1) (toInt $m.Content)) }}
     {{ print .User.Mention ", " $edit_del_msg " `" $c.c "`" }}
     {{ $w := true }}{{ range (getMember $m.Author.ID).Roles }}{{ if in $ignored_roles . }}{{ $w = false }}{{ end }}{{ end }}
-    {{ if and $warn_on_del $w }}{{ $s := execAdmin "warn" $c.u $warn_msg }}{{ end }}
+    {{ if and $warn_on_del (not $c.w) $w }}{{ $s := execAdmin "warn" $c.u $warn_msg }}{{ $c.Set "w" 1 }}{{ dbSet 20 "counting" $c}}{{ end }}
   {{ else }}
     {{ print .User.Mention ", " $wrong }}
   {{ end }}
