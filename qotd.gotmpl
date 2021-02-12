@@ -25,9 +25,7 @@
   {{ $l := getMessage nil $q.l.m }}{{ $u := getMember $q.l.u }}
   {{ sendMessage $report_channel (cembed 
   "title" "QOTD Report" "color" 49306 
-  "fields" (cslice 
-    (sdict "name" (printf "[Question:](https://discord.com/channels/%d/%d/%d)" .Guild.ID .Channel.ID $q.l.m) "value" $l.Content "inline" false) 
-    (sdict "name" "Answers:" "value" (str $q.l.t) "inline" true)) 
+  "description" (printf "[**Question:**](https://discord.com/channels/%d/%d/%d)\n%s\n\n**Answers:**\n%d" .Guild.ID .Channel.ID $q.l.m $l.Content $q.l.t) 
   "footer" (sdict "text" $u.User.String "icon_url" ($u.User.AvatarURL "128")) 
   "timestamp" $l.Timestamp) }}
   {{ deleteTrigger 1 }}
