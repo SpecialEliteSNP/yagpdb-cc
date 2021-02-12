@@ -1,0 +1,15 @@
+{{/* USAGE:
+     - $c is your integer
+     - $o is the ordinal for $c
+     - Use {{ $i }}{{ $o }} to get the full result e.g. 1st, 11th or 22nd
+*/}}
+
+{{ $i := 12 }}
+
+{{ $e := toInt (slice (str $i) (sub (len (str $i)) 1)) }}{{ $o := "th" }}
+{{ if ne $i (or 11 12 13) }}
+  {{ if eq $e 1 }}{{ $o = "st" }}
+  {{ else if eq $e 2 }}{{ $o = "nd" }}
+  {{ else if eq $e 3 }}{{ $o = "rd" }}
+  {{ end }}
+{{ end }}
