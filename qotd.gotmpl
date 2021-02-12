@@ -24,10 +24,10 @@
 {{ else if and $s (in .Message.MentionRoles $qotd_role) }}
   {{ $l := getMessage nil $q.l.m }}{{ $u := getMember $q.l.u }}
   {{ sendMessage $report_channel (cembed 
-  "title" "QOTD Report" "color" 49306 
-  "description" (printf "[**Question:**](https://discord.com/channels/%d/%d/%d)\n%s\n\n**Answers:**\n%d" .Guild.ID .Channel.ID $q.l.m $l.Content $q.l.t) 
-  "footer" (sdict "text" $u.User.String "icon_url" ($u.User.AvatarURL "128")) 
-  "timestamp" $l.Timestamp) }}
+    "title" "QOTD Report" "color" 49306 
+    "description" (printf "[**Question:**](https://discord.com/channels/%d/%d/%d)\n%s\n\n**Answers:**\n%d" .Guild.ID .Channel.ID $q.l.m $l.Content $q.l.t) 
+    "footer" (sdict "text" $u.User.String "icon_url" ($u.User.AvatarURL "128")) 
+    "timestamp" $l.Timestamp) }}
   {{ deleteTrigger 1 }}
   {{ $m := sendMessageNoEscapeRetID nil .Message.Content }}
   {{ range $k, $v := $q }}
