@@ -21,16 +21,24 @@
 {{/* CODE - Don't edit this part */}}
 {{ $r := true }}{{ range .Member.Roles }}{{ if in $ignored_roles . }}{{ $r = false }}{{ end }}{{ end }}
 {{ if $r }}
-  {{ $u := str .User.ID }}
-  {{ $lu := "" }}{{ with (dbGet 20 "story-channel").Value }}{{ $lu = . }}{{ end }}
-  {{ if not (reFind (print `\A\s*(?:[[:alpha:]]+\s+){` (sub $words 1) `}[[:alpha:]]+\s*\z`) .Message.Content) }}
-    {{ deleteTrigger 0 }}
-    {{ print .User.Mention ", please use exactly **" $words "** words in this channel 😉" }}
-  {{ else if or (not $lu) (ne $lu $u) }}
-    {{ dbSet 20 "story-channel" $u }}
-  {{ else }}
-    {{ deleteTrigger 0 }}
+  {{ $s := sdict }}{{ with (dbGet 20 "story-channel").Value }}{{ $s = sdict . }}{{ end }}
+  {{ if not $s }}
+    {{ dbSet 20 "story-channel" (sdict "l" 0) }}
+    {{ addReactions "☑" }}
+    {{ print .User.Mention ", <#" .Channel.ID "> is all set up as your " $words "-word-channel!" }}
+  {{ else if eq $s.l .User.ID }}
+    {{ addReactions "👎" }}
+    {{ deleteTrigger 1 }}
     {{ print .User.Mention ", " $twice }}
+    {{ deleteResponse 5 }}
+  {{ else if not (reFind (print `\A\s*(?:[[:alpha:]]+\s+){` (sub $words 1) `}[[:alpha:]]+\s*\z`) .Message.Content) }}
+    {{ addReactions "❌" }}
+    {{ deleteTrigger 1 }}
+    {{ print .User.Mention ", please use exactly **" $words "** words in this channel 😉" }}
+    {{ deleteResponse 5 }}
+  {{ else }}
+    {{ $s.Set "l" .User.ID }}
+    {{ $s.Set (str .User.ID) (add ($s.Get (str .User.ID)) 1) }}
+    {{ dbSet 20 "story-channel" $s }}
   {{ end }}
-  {{ deleteResponse 5 }}
 {{ end }}
