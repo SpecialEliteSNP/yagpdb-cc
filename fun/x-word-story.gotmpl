@@ -7,7 +7,11 @@
   {{/* Replace 3 with amount of words you want to be used in the x-word-story channel */}}  
     {{ $words := 3 }}
   {{/* Roles to ignore, these could be your staff roles or just other exceptions */}}
-  {{ $ignored_roles := cslice 763447831829938176 764103587223044116 778952687986802698 764054381535821825 775003755842109440 }}
+    {{ $ignored_roles := cslice 763447831829938176 764103587223044116 778952687986802698 764054381535821825 775003755842109440 }}
+
+  {{/* Responses: */}}
+    {{/* Message when they try to write twice in a row */}}
+      {{ $twice := "you can't write a story on your own 😉" }}
 
 
 {{/* CODE - Don't edit this part */}}
@@ -22,7 +26,7 @@
     {{ dbSet 20 "story-channel" $u }}
   {{ else }}
     {{ deleteTrigger 0 }}
-    {{ .User.Mention }}, you can't write a story on your own 😉
+    {{ print .User.Mention ", " $twice }}
   {{ end }}
   {{ deleteResponse 5 }}
 {{ end }}
