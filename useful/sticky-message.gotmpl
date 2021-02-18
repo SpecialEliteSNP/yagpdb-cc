@@ -12,4 +12,4 @@
 {{ with (dbGet 20 "sticky-message").Value }}
   {{ deleteMessage nil (toInt .) 0 }}
 {{ end }}
-{{ dbSet 20 "sticky-message" (str (sendMessageRetID nil $m)) }}
+{{ dbSet 20 "sticky-message" (str (sendMessageNoEscapeRetID nil $m)) }}
