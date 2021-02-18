@@ -22,7 +22,7 @@
 {{ if not $q }}
   {{ dbSet 20 "qotd" (sdict "l" (sdict "m" 0 "t" 0 "u" 0)) }}
   {{ addReactions "☑" }}
-  {{ print .User.Mention ", <#" .Channel.ID "> is all set up as your " $words "-word-channel!" }}
+  {{ print .User.Mention ", <#" .Channel.ID "> is all set up as your QOTD channel!" }}
 {{ else if and $s (in .Message.MentionRoles $qotd_role) }}
   {{ $l := getMessage nil $q.l.m }}{{ $u := getMember $q.l.u }}
   {{ sendMessage $report_channel (cembed 
