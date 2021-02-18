@@ -1,0 +1,15 @@
+{{/* SETUP:
+     - Set the restrictions to only run in your sticky-message channel
+     - Set the trigger type to Regex and the trigger to: \A
+*/}}
+
+{{/* VARIABLES - You can edit these values */}}
+  {{/* The message */}}
+    {{ $m := cembed "title" "Test message" "description" "Random text" "color" (randInt 16777217) }}
+
+
+{{/* CODE - Don't edit this part */}}
+{{ with (dbGet 20 "sticky-message").Value }}
+  {{ deleteMessage nil (toInt .) 0 }}
+{{ end }}
+{{ dbSet 20 "sticky-message" (str (sendMessageRetID nil $m)) }}
