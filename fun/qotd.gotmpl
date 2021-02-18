@@ -38,7 +38,7 @@
 {{ else }}
   {{ if not ($q.Get (str .User.ID)).a }}
     {{ $q.Set (str .User.ID) (sdict "a" 1 "n" (add ($q.Get (str .User.ID)).n 1)) }}
-    {{ $q.l.Set "t" (add $q.l.t 1) }}
+    {{ $q.Set "l" (sdict "m" $q.l.m "t" (add $q.l.t 1) "u" $q.l.u) }}
     {{ dbSet 20 "qotd" $q }}
   {{ else if not $s }}
     {{ deleteTrigger 1 }}
