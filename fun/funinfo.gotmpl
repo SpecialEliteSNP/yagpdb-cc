@@ -8,6 +8,7 @@
   {{/* The command cooldown in seconds. Set it to 0 to disable the cooldown. */}}
     {{ $cooldown := 20 }}
 
+
 {{/* CODE - Don't edit this part */}}
 {{ if dbGet .User.ID "funinfo" }}
   {{ addReactions "⏳" }}
