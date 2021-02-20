@@ -1,5 +1,4 @@
 {{/* SETUP:
-     - Set the restrictions to only run in your sticky-message channel
      - Set the trigger type to Regex and the trigger to: \A
 */}}
 
@@ -9,7 +8,7 @@
 
 
 {{/* CODE - Don't edit this part */}}
-{{ with (dbGet 20 "sticky-message").Value }}
+{{ with (dbGet .Channel.ID "sticky-message").Value }}
   {{ deleteMessage nil (toInt .) 0 }}
 {{ end }}
-{{ dbSet 20 "sticky-message" (str (sendMessageNoEscapeRetID nil $m)) }}
+{{ dbSet .Channel.ID "sticky-message" (str (sendMessageNoEscapeRetID nil $m)) }}
