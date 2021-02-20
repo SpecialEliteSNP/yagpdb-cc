@@ -1,2 +1,4 @@
+{{/* CREDITS: SpecialEliteSNP <https://github.com/SpecialEliteSNP> */}}
+
 {{ $e := execAdmin "prefix" }}{{ $prefix := reReplace `[\.\[\]\-\?\!\\\*\{\}\(\)\|\+\$\^]` (slice $e (add 15 (len (str .Guild.ID))) (sub (len $e) 1)) `\$0` }}
 {{ $prefix }}

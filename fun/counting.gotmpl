@@ -1,6 +1,11 @@
 {{/* SETUP:
-     - Set the restrictions to only run in your counting channel
+     - Set the cc restrictions to only run in your counting channel
      - Set the trigger type to Regex and the trigger to: \A
+
+     USAGE:
+     - Just type the right number and count together :)
+
+     CREDITS: SpecialEliteSNP <https://github.com/SpecialEliteSNP>
 */}}
 
 {{/* VARIABLES - You can edit these values */}}
@@ -41,8 +46,8 @@
   {{ deleteTrigger 1 }}
   {{ if $s }}
     {{ if not $r }}
-      {{ $m := sendMessageRetID nil (cembed 
-        "color" 16734296 
+      {{ $m := sendMessageRetID nil (cembed
+        "color" 16734296
         "description" (print "‼ " .User.Mention ", are you sure you want to reset the count to **1**?\n\nIf you're sure, type `-resetcount` again.")
         "footer" (sdict "text" "This message will self destruct in 30 seconds")) }}
       {{ deleteMessage nil $m 30 }}
