@@ -1,9 +1,13 @@
-{{/* SETUP:
-     - Set the restrictions to only run in your counting channel
-     - Set the trigger type to Regex and the trigger to: \A-funinfo(?:\s+(?:\d{17,19}|<@!?\d{17,19}>))?\z
-       If your own prefix is not "-" then change it up here^ to your correct prefix.
+{{/*
+    SETUP:
+    - Set the trigger type to Regex and the trigger to: \A-funinfo(?:\s+(?:\d{17,19}|<@!?\d{17,19}>))?\z
+      If your own prefix is not "-" then change it up here^ to your correct prefix.
 
-     CREDITS: SpecialEliteSNP <https://github.com/SpecialEliteSNP>
+    USAGE:
+    - Type -funinfo <User: ID/Mention> to see info about counting, qotd and x-word-story.
+      The bot will respond with a nice embed showing the user's count, answers and story lines.
+
+    CREDITS: SpecialEliteSNP <https://github.com/SpecialEliteSNP>
 */}}
 
 {{/* VARIABLES - You can edit these values */}}
