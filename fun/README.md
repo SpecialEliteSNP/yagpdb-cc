@@ -1,4 +1,4 @@
-# Fun
+# Fun Readme
 In the fun folder you'll find `counting`, `qotd`, `x-word-story` and `funinfo`. The latter is an optional command that accesses data that's stored when using one of the other CCs.
 
 ---
