@@ -14,12 +14,15 @@
   {{/* The command cooldown in seconds. Set it to 0 to disable the cooldown. */}}
     {{ $cooldown := 20 }}
 
+  {{/* The colour of the embed (use hex: 0xFF00FF or decimal: 0-16777216) */}}
+    {{ $colour := 16734296 }}
+
 
 {{/* CODE - Don't edit this part */}}
 {{ if dbGet .User.ID "funinfo" }}
   {{ addReactions "⏳" }}
 {{ else }}
-  {{ $e := sdict "color" 16734296 }}
+  {{ $e := sdict "color" $colour }}
   {{ $u := str .User.ID }}
   {{ if eq (len .Args) 2 }}
     {{ $u = index .Args 1 }}
