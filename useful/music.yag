@@ -1,0 +1,32 @@
+{{ $sb := exec "sb" }}
+{{ $songs := cslice }}
+{{ range (reFindAllSubmatches `\x60(.+?)\x60` (slice $sb 29 (sub (len $sb) 36))) }}
+  {{ $songs = $songs.Append (index . 1) }}
+{{ end }}
+{{ $e := "" }}
+
+{{ if gt (len .Args) 2 }}
+  {{ $p := execAdmin "prefix" }}{{ $prefix := reReplace `[\.\[\]\-\?\!\\\*\{\}\(\)\|\+\$\^]` (slice $p (add 15 (len (str .Guild.ID))) (sub (len $p) 1)) `\$0` }}
+  {{ range $songs }}
+    {{ with reFind (print `(?i).*` (reReplace (print $prefix `m(usic)?\s+(p(lay)?|q(ueue)?)\s*`) $.Message.Content "") `.*`) . }}
+      {{ if reFind "p(lay)?" (index $.Args 1) }}
+        {{ if  }}
+        {{ $s := execAdmin "sbclose" }}
+        {{ sleep 1 }}{{ exec "sb" . }}
+      {{ else if reFind "q(ueue)?" (index $.Args 1)  }}
+        {{ exec "sb" . }}
+      {{ end }}
+    {{ else }}
+      {{ $e = "Song not found" }}
+    {{ end }}
+  {{ end }}
+{{ else }}
+  {{ $e = "No song specified" }}
+{{ end }}
+
+{{ if $e }}
+  {{ print "❌**" $e ", available songs:**" -}}
+  {{ range $songs }}
+    {{- print "\n" . -}}
+  {{ end }}
+{{ end }}
