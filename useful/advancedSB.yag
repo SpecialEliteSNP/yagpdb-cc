@@ -1,25 +1,30 @@
-{{ $sb := exec "sb" }}
+{{ $sb := execAdmin "sb" }}
 {{ $songs := cslice }}
 {{ range (reFindAllSubmatches `\x60(.+?)\x60` (slice $sb 29 (sub (len $sb) 36))) }}
   {{ $songs = $songs.Append (index . 1) }}
 {{ end }}
 {{ $e := "" }}
 
-{{ if gt (len .Args) 2 }}
-  {{ $p := execAdmin "prefix" }}{{ $prefix := reReplace `[\.\[\]\-\?\!\\\*\{\}\(\)\|\+\$\^]` (slice $p (add 15 (len (str .Guild.ID))) (sub (len $p) 1)) `\$0` }}
+{{ $p := execAdmin "prefix" }}
+{{ $cmd := print (reReplace `[\.\[\]\-\?\!\\\*\{\}\(\)\|\+\$\^]` (slice $p (add 15 (len (str .Guild.ID))) (sub (len $p) 1)) `\$0`) `m(usic)?\s+(p(lay)?|q(ueue)?|s(top)?)\s*` }}
+{{ if and (gt (len .Args) 2) (reFind $cmd .Message.Content) }}
+  {{ $nf := true }}
   {{ range $songs }}
-    {{ with reFind (print `(?i).*` (reReplace (print $prefix `m(usic)?\s+(p(lay)?|q(ueue)?)\s*`) $.Message.Content "") `.*`) . }}
+    {{ with reFind (print `(?i).*` (reReplace $cmd $.Message.Content "") `.*`) . }}
+      {{ $nf = false }}
       {{ if reFind "p(lay)?" (index $.Args 1) }}
-        {{ if  }}
         {{ $s := execAdmin "sbclose" }}
-        {{ sleep 1 }}{{ exec "sb" . }}
+        {{ sleep 1 }}{{ reReplace "it" (exec "sb" .) (print "`" . "`") }}
+        {{/* {{ if not reFind `P|` }} */}}
       {{ else if reFind "q(ueue)?" (index $.Args 1)  }}
-        {{ exec "sb" . }}
+        {{ print (exec "sb" .) " `" . "`" }}
       {{ end }}
-    {{ else }}
-      {{ $e = "Song not found" }}
     {{ end }}
   {{ end }}
+  {{ if $nf }}{{ $e = "Song not found" }}{{ end }}
+{{ else if reFind `s(top)?` (index .Args 1) }}
+  {{ $s := exec "sbclose" }}
+  Sounds stopped
 {{ else }}
   {{ $e = "No song specified" }}
 {{ end }}
