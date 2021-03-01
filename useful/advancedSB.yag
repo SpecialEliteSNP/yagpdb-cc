@@ -15,7 +15,6 @@
       {{ if reFind "p(lay)?" (index $.Args 1) }}
         {{ $s := execAdmin "sbclose" }}
         {{ sleep 1 }}{{ reReplace "it" (exec "sb" .) (print "`" . "`") }}
-        {{/* {{ if not reFind `P|` }} */}}
       {{ else if reFind "q(ueue)?" (index $.Args 1)  }}
         {{ print (exec "sb" .) " `" . "`" }}
       {{ end }}
