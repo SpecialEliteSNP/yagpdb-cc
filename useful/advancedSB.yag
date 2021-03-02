@@ -22,8 +22,7 @@
   {{ end }}
   {{ if $nf }}{{ $e = "Song not found" }}{{ end }}
 {{ else if reFind `s(top)?` (index .Args 1) }}
-  {{ $s := exec "sbclose" }}
-  Sounds stopped
+  {{ exec "sbclose" }}
 {{ else }}
   {{ $e = "No song specified" }}
 {{ end }}
