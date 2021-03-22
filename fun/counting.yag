@@ -100,13 +100,13 @@
   {{ else }}
     {{ deleteAllMessageReactions nil $c.l.m }}
     {{ addReactions $emoji }}
-    {{ $c.Set (str .User.ID) (add ($c.Get (str .User.ID)) 1) }}
-    {{ $c.Set "l" (sdict "c" (add $c.l.c 1) "m" .Message.ID "u" .User.ID "w" 0) }}
-    {{ dbSet 20 "counting" $c }}
     {{ if eq (toInt (mod $c.l.c 1000)) 0 }}
       {{ print $1000_ntf " " $c.l.c "?! 😲" }}
     {{ else if eq (toInt (mod $c.l.c 100)) 0 }}
       {{ print $100_ntf " " $c.l.c "! 🎉" }}
     {{ end }}
+    {{ $c.Set (str .User.ID) (add ($c.Get (str .User.ID)) 1) }}
+    {{ $c.Set "l" (sdict "c" (add $c.l.c 1) "m" .Message.ID "u" .User.ID "w" 0) }}
+    {{ dbSet 20 "counting" $c }}
   {{ end }}
 {{ end }}
