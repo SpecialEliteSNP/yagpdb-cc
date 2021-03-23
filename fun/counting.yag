@@ -82,11 +82,13 @@
     {{ print .User.Mention ", the count starts at 1 😉" }}
   {{ else if not $m }}
     {{ print .User.Mention ", " $change_msg " `" $c.l.c "`" }}
-    {{ $s := false }}{{ range (getMember $c.l.u).Roles }}{{ if in $staff_roles . }}{{ $s = true }}{{ end }}{{ end }}
+    {{ $mroles := cslice }}{{with getMember $c.l.u }}{{$mroles = $mroles.AppendSlice .Roles }}{{ end }}
+    {{ $s := false }}{{ if $mroles }}{{ range $mroles }}{{ if in $staff_roles . }}{{ $s = true }}{{ end }}{{ end }}{{ else }}{{ $s = true }}{{ end }}
     {{ if and $warn_on_del (not $c.l.w) (not $s) }}{{ $h := execAdmin "warn" $c.l.u $warn_msg }}{{ $c.Set "l" (sdict "c" $c.l.c "m" $c.l.m "u" $c.l.u "w" 1) }}{{ dbSet 20 "counting" $c}}{{ end }}
   {{ else if ne (sub $c.l.c 1) (toInt $m.Content) }}
     {{ print .User.Mention ", " $change_msg " `" $c.l.c "`" }}
-    {{ $s := false }}{{ range (getMember $c.l.u).Roles }}{{ if in $staff_roles . }}{{ $s = true }}{{ end }}{{ end }}
+    {{ $mroles := cslice }}{{with getMember $c.l.u }}{{$mroles = $mroles.AppendSlice .Roles }}{{ end }}
+    {{ $s := false }}{{ if $mroles }}{{ range $mroles }}{{ if in $staff_roles . }}{{ $s = true }}{{ end }}{{ end }}{{ else }}{{ $s = true }}{{ end }}
     {{ if and $warn_on_del (not $c.l.w) (not $s) }}{{ $h := execAdmin "warn" $c.l.u $warn_msg }}{{ $c.Set "l" (sdict "c" $c.l.c "m" $c.l.m "u" $c.l.u "w" 1) }}{{ dbSet 20 "counting" $c}}{{ end }}
   {{ else }}
     {{ print .User.Mention ", " $wrong }}
